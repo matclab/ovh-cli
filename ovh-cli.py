@@ -42,6 +42,9 @@ import os
 import sys
 import ovh
 
+OVHCLIDIR = os.path.split(os.path.realpath(__file__))[0]
+sys.path.insert(0, OVHCLIDIR)
+
 from ovhcli.utils import camel_to_snake
 from ovhcli.schema import load_schemas, SCHEMAS_BASE_PATH, SCHEMAS
 from ovhcli.formater import formaters, get_formater
@@ -93,7 +96,8 @@ def init_arg_parser(endpoint, refresh=False):
     :param boolean refresh: when ``True``, bypass cache, no matter its state.
     '''
 
-    cache_file = SCHEMAS_BASE_PATH+endpoint
+    schemas_base_path = os.path.join(OVHCLIDIR, SCHEMAS_BASE_PATH)
+    cache_file = os.path.join( schemas_base_path, endpoint)
 
     # First attempt to load parser from cache
     try:
@@ -104,8 +108,8 @@ def init_arg_parser(endpoint, refresh=False):
         pass
 
     # cache dir exists ?
-    if not os.path.exists(SCHEMAS_BASE_PATH):
-        os.makedirs(SCHEMAS_BASE_PATH)
+    if not os.path.exists(schemas_base_path):
+        os.makedirs(schemas_base_path)
 
     # get schemas
     load_schemas(ENDPOINTS[endpoint])
